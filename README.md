@@ -49,12 +49,6 @@ py main.py --vfs missing.json
 Для двоичного файла укажите `"encoding": "base64"`, тогда `content`
 должен содержать корректную строку base64.
 
-## Проверка PEP 8
-
-```powershell
-py -m pycodestyle main.py
-```
-
 ## GitHub
 
 Замените `main.py` и `README.md` в существующем репозитории, добавьте
