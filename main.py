@@ -1,4 +1,7 @@
+import base64
+import binascii
 import getpass
+import json
 import os
 import re
 import socket
@@ -10,6 +13,49 @@ def replace_variable(match):
     return os.environ.get(name, "")
 
 
+def check_node(node):
+    if not isinstance(node, dict):
+        raise ValueError("узел должен быть объектом JSON")
+
+    node_type = node.get("type")
+    if node_type == "directory":
+        children = node.get("children")
+        if not isinstance(children, dict):
+            raise ValueError("у каталога должно быть поле children")
+        for name, child in children.items():
+            if not name or "/" in name or "\\" in name:
+                raise ValueError("недопустимое имя файла или каталога")
+            check_node(child)
+    elif node_type == "file":
+        content = node.get("content")
+        encoding = node.get("encoding", "text")
+        if not isinstance(content, str):
+            raise ValueError("содержимое файла должно быть строкой")
+        if encoding == "base64":
+            try:
+                base64.b64decode(content, validate=True)
+            except (ValueError, binascii.Error) as error:
+                raise ValueError("неверные данные base64") from error
+        elif encoding != "text":
+            raise ValueError("неизвестная кодировка файла")
+    else:
+        raise ValueError("неизвестный тип узла")
+
+
+def load_vfs(path):
+    try:
+        with open(path, "r", encoding="utf-8-sig") as file:
+            data = json.load(file)
+        check_node(data)
+        if data["type"] != "directory":
+            raise ValueError("корень VFS должен быть каталогом")
+        print("[vfs] Файловая система загружена в память")
+        return data
+    except (OSError, UnicodeError, ValueError) as error:
+        print("Ошибка загрузки VFS:", error)
+        return None
+
+
 def execute_command(line):
     line = re.sub(
         r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)",
@@ -17,7 +63,6 @@ def execute_command(line):
         line
     )
     parts = line.split()
-
     if not parts:
         return True
 
@@ -41,7 +86,6 @@ def execute_command(line):
             return False
     else:
         print("Ошибка: неизвестная команда", command)
-
     return True
 
 
@@ -56,8 +100,8 @@ def main():
             print("Ошибка: неизвестный параметр", option)
             return
         if (
-                index + 1 >= len(sys.argv)
-                or sys.argv[index + 1].startswith("--")
+            index + 1 >= len(sys.argv)
+            or sys.argv[index + 1].startswith("--")
         ):
             print("Ошибка: не указано значение для", option)
             return
@@ -73,6 +117,11 @@ def main():
         script_path if script_path else "не задан"
     )
 
+    if vfs_path:
+        vfs = load_vfs(vfs_path)
+        if vfs is None:
+            return
+
     username = getpass.getuser()
     hostname = socket.gethostname()
     prompt = username + "@" + hostname + ":~$ "
@@ -87,7 +136,7 @@ def main():
                     print(prompt + line)
                     if not execute_command(line):
                         return
-        except OSError as error:
+        except (OSError, UnicodeError) as error:
             print("Ошибка выполнения стартового скрипта:", error)
             return
 

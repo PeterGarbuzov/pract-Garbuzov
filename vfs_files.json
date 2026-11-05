@@ -1,0 +1,18 @@
+{
+  "type": "directory",
+  "children": {
+    "readme.txt": {
+      "type": "file",
+      "content": "Пример текстового файла"
+    },
+    "notes.txt": {
+      "type": "file",
+      "content": "Второй файл"
+    },
+    "image.bin": {
+      "type": "file",
+      "encoding": "base64",
+      "content": "AAECAwQ="
+    }
+  }
+}

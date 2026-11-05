@@ -1,6 +1,7 @@
 ls
 ls -l
-cd documents
-cd one two
+cd home
+cd home student
 unknown
 ls $USERNAME
+exit wrong

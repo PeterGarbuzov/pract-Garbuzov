@@ -1,0 +1,24 @@
+{
+  "type": "directory",
+  "children": {
+    "home": {
+      "type": "directory",
+      "children": {
+        "student": {
+          "type": "directory",
+          "children": {
+            "documents": {
+              "type": "directory",
+              "children": {
+                "work.txt": {
+                  "type": "file",
+                  "content": "Третий этап"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
