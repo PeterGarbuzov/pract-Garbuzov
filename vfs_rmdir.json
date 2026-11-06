@@ -1,0 +1,22 @@
+{
+  "type": "directory",
+  "children": {
+    "empty": {"type": "directory", "children": {}},
+    "second": {"type": "directory", "children": {}},
+    "documents": {
+      "type": "directory",
+      "children": {
+        "notes.txt": {
+          "type": "file",
+          "content": "Первая строка\nВторая строка\nТретья строка\n"
+        }
+      }
+    },
+    "folder": {
+      "type": "directory",
+      "children": {
+        "inside": {"type": "directory", "children": {}}
+      }
+    }
+  }
+}

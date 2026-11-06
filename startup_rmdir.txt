@@ -1,0 +1,27 @@
+# Успешное удаление пустого каталога
+ls
+rmdir empty
+ls
+# Несколько аргументов и относительные пути
+rmdir second folder/inside
+ls folder
+rmdir folder
+ls
+# Ошибки: непустой каталог, файл, отсутствующий путь, корень
+rmdir documents
+rmdir documents/notes.txt
+rmdir missing
+rmdir /
+rmdir
+# Нельзя удалить текущую папку или её родителя
+cd documents
+rmdir .
+rmdir ..
+# Проверка остальных команд после ошибок
+ls
+cat notes.txt
+head -n 2 notes.txt
+cd /
+ls -l
+unknown
+exit wrong

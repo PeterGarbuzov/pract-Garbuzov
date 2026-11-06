@@ -206,6 +206,31 @@ def command_head(vfs, current_path, args):
                 print()
 
 
+
+def command_rmdir(vfs, current_path, args):
+    if not args:
+        print("Ошибка: rmdir: укажите каталог")
+        return
+    for path in args:
+        parts = normalize_path(current_path, path)
+        if not parts:
+            print("Ошибка: rmdir: нельзя удалить корень:", path)
+            continue
+        node = find_node(vfs, parts)
+        if node is None:
+            print("Ошибка: rmdir: каталог не найден:", path)
+        elif node["type"] != "directory":
+            print("Ошибка: rmdir: это не каталог:", path)
+        elif node["children"]:
+            print("Ошибка: rmdir: каталог не пуст:", path)
+        elif current_path[:len(parts)] == parts:
+            print("Ошибка: rmdir: нельзя удалить текущий каталог"
+                  " или его родителя:", path)
+        else:
+            parent = find_node(vfs, parts[:-1])
+            del parent["children"][parts[-1]]
+
+
 def execute_command(line, vfs, current_path):
     line = re.sub(VARIABLE_PATTERN, replace_variable, line)
     parts = line.split()
@@ -219,7 +244,7 @@ def execute_command(line, vfs, current_path):
         else:
             print("Выход")
             return False, current_path
-    elif command in ("ls", "cd", "cat", "head"):
+    elif command in ("ls", "cd", "cat", "head", "rmdir"):
         if vfs is None:
             print("Ошибка: VFS не загружена. Укажите --vfs")
         elif command == "ls":
@@ -228,8 +253,10 @@ def execute_command(line, vfs, current_path):
             current_path = command_cd(vfs, current_path, args)
         elif command == "cat":
             command_cat(vfs, current_path, args)
-        else:
+        elif command == "head":
             command_head(vfs, current_path, args)
+        else:
+            command_rmdir(vfs, current_path, args)
     else:
         print("Ошибка: неизвестная команда", command)
     return True, current_path
