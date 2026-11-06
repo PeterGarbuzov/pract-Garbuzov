@@ -1,7 +1,26 @@
+# Проверка всех команд этапа 4 и ошибок
 ls
 ls -l
-cd home
-cd home student
+ls /home/student/documents
+ls -l /home /home/student
+cd /home/student/documents
+ls
+cat work.txt
+head work.txt
+head -n 1 work.txt
+cd ..
+ls
+cd /home/student/documents/work.txt
+cd missing
+ls missing
+ls -x
+cat missing.txt
+cat /home
+head -n abc /home/student/documents/work.txt
+head -n -1 /home/student/documents/work.txt
+head
+cat
+cd one two
 unknown
 ls $USERNAME
 exit wrong

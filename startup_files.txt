@@ -1,0 +1,9 @@
+ls
+ls -l
+cat readme.txt
+cat notes.txt
+cat image.bin
+head readme.txt
+head -n 1 notes.txt
+head image.bin
+exit wrong
